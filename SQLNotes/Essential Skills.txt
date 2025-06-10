@@ -1,0 +1,18 @@
+1. Version Control (Git)
+2. Databases (SQL)
+3. Command Line (Terminal)
+4. Unit Testing (Bonous: Continous Integration/ Delivery)
+5. Learn Multiple Languages
+
+
+Preparing for PY interview(10 things you should know)
+1. know how to write a code on a whiteboard or paper
+2. know basic py control flow 
+3. be able to disscuss how yo've used python
+4. know how to solve common interview problems
+5. know basic py datatypes and when to use them
+6. know how to use list comphrensions
+7. know how to use generators
+8. know the basic of OOP
+9. have python related questions ready to ask your interviewer
+10. know the basic of other technologies

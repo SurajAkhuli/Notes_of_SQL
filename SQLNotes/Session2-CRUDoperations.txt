@@ -1,0 +1,247 @@
+Learn the SQL right way Session 2:
+==============================================
+
+CRUD Operations
+
+create  --- Insert statements
+read    --- select statements
+update  ---  update statements
+delete  ---- delete statements
+
+Creation of Table and Insert statements:
+
+=========================================
+
+employee table
+
+prefer to hire from bangalore location
+
+
+
+CREATE TABLE employee (
+firstname varchar(20),
+middlename varchar(20),
+lastname varchar(20),
+age INT,
+salary INT,
+location varchar(20)
+)
+
+describe employee;
+
+we are doing something with definition is called DDL
+
+show tables;
+
+select * from employee;
+
+inserting data into Table:
+=============================
+
+INSERT INTO employee(firstname, middlename, lastname, age, salary, location) VALUES ('satya','nara','yana',36,60000,'bangalore');
+
+
+INSERT INTO employee(firstname, middlename, lastname, age, salary, location) VALUES ('dhruvan','kumar','bhima',17,80000,'bangalore');
+
+How to insert data into only few columns:
+===============================================
+
+
+INSERT INTO employee(firstname,  lastname, age, salary, location) VALUES ('Rajesh','sharma',28,10000,'bangalore');
+
+INSERT INTO employee(firstname,  lastname, age, salary, location) VALUES ("Ritesh's",'sharma',28,10000,'bangalore');
+
+INSERT INTO employee(firstname,  lastname, age, salary, location) VALUES ('Ritesh\'s','sharma',28,10000,'bangalore');
+
+
+How to insert multiple values in one Go:
+
+=============================================================================
+
+INSERT INTO employee(firstname, middlename, lastname, age, salary, location) VALUES ('Kapil','Kumar','Sinha',28,10000,'bangalore'),('Satish','Kumar','Sinha',30,20000,'bangalore');
+
+Datatype Mismatch:
+======================================
+
+INSERT INTO employee(firstname, middlename, lastname, age, salary, location) VALUES ('Kapildddddddddddddddddddddddjjjjjjjj','Kumar','Sinha',28,10000,'bangalore');
+
+ERROR 1406 (22001): Data too long for column 'firstname' at row 1
+
+NULL
+=====================================
+
+
+INSERT INTO employee(firstname, lastname, age, salary) VALUES ('Kumar','Sinha',29,10000);
+
+Creating Table without NULL:
+
+====================================
+
+CREATE TABLE employee (
+firstname varchar(20) NOT NULL,
+middlename varchar(20),
+lastname varchar(20) NOT NULL,
+age INT NOT NULL,
+salary INT NOT NULL,
+location varchar(20) NOT NULL
+);
+
+INSERT INTO employee(middlename, lastname, age, salary, location) VALUES ('Kumar','Sinha',29,10000,'bangalore');
+ERROR 1364 (HY000): Field 'firstname' doesn't have a default value.
+
+Default Values:
+
+==================================
+
+CREATE TABLE employee (
+firstname varchar(20) NOT NULL,
+middlename varchar(20),
+lastname varchar(20) NOT NULL,
+age INT NOT NULL,
+salary INT NOT NULL,
+location varchar(20) DEFAULT 'BANGLORE'
+);
+
+
+INSERT INTO employee(firstname, lastname, age, salary, location) VALUES ('satish','kumar',29,10000,'hyderabad');
+
+
+INSERT INTO employee(firstname, lastname, age, salary, location) VALUES ('rajesh','kumar',29,10000,null);
+
+
+
+Combination of NOT NULL and DEFAULT
+
+=========================================
+CREATE TABLE employee (
+firstname varchar(20) NOT NULL,
+middlename varchar(20),
+lastname varchar(20) NOT NULL,
+age INT NOT NULL,
+salary INT NOT NULL,
+location varchar(20) NOT NULL DEFAULT 'BANGLORE'
+);
+
+INSERT INTO employee(firstname, lastname, age, salary) VALUES ('rajesh','kumar',29,10000);
+
+ERROR 1048 (23000): Column 'location' cannot be null
+
+INSERT INTO employee(firstname, lastname, age, salary) VALUES ('rajesh','kumar',29,10000);
+
+
+=========================================
+The cursor that is coming where we write code is known as "MySQL prompt" or "SQL command line prompt".
+
+
+for deleting particular row in table
+=========================================
+DELETE FROM table_name WHERE condition;
+
+
+for deleting particular column
+=========================================
+ALTER TABLE table_name DROP COLUMN column_name;
+
+=========================================
+In mysql to check if a word is a reserved keyword, you can:
+-> check official documentation of mysql reserved keywords list
+-> Try using the word without backticks in a dummy query-if it gives an error, its reserved
+
+=========================================
+for using reserved keyword as table or column name we must enclose it in backticks(`)
+-> why backticks - backtick => hey mysql, treat this like a name, not a command.
+
+
+how to rename database in mysql 
+=========================================
+Option 1: Manual Method (Safest)
+	CREATE DATABASE new_database_name;
+ 
+	USE old_database_name;
+	SHOW TABLES;
+	
+	CREATE TABLE new_database_name.table_name LIKE old_database_name.table_name;
+	INSERT INTO new_database_name.table_name SELECT * FROM old_database_name.table_name;
+	
+	DROP DATABASE old_database_name;
+
+Option 2: Using mysqldump (Recommended for large databases)
+	mysqldump -u username -p old_database_name > backup.sql
+	CREATE DATABASE new_database_name;
+	mysql -u username -p new_database_name < backup.sql
+	DROP DATABASE old_database_name;
+
+	No, password is not considered null here. After -p, it asks you to enter the password.
+	If password is not null, just run: Then enter the password when it prompts.
+	
+	If you want to write password directly (not recommended for security):
+	mysqldump -u username -pYourPassword old_database_name > backup.sql
+	(no space between -p and password)
+
+
+MariaDB [utubepractice]> desc employee;
++------------+-------------+------+-----+----------+-------+
+| Field      | Type        | Null | Key | Default  | Extra |
++------------+-------------+------+-----+----------+-------+
+| firstname  | varchar(50) | NO   |     | NULL     |       |
+| middlename | varchar(50) | YES  |     | NULL     |       |
+| lastname   | varchar(50) | NO   |     | NULL     |       |
+| age        | int(11)     | NO   |     | NULL     |       |
+| salary     | int(11)     | YES  |     | NULL     |       |
+| location   | varchar(50) | YES  |     | banglore |       |
++------------+-------------+------+-----+----------+-------+
+
+Null column (in DESC employee) means:
+YES → column can accept NULL values.
+NO → column cannot be NULL, value must be given.
+
+how its possible in my case for example in  lastname Null=No  means column cannot be null and default is also null ??????
+
+In MySQL/MariaDB, if you don’t set any default manually, system shows Default = NULL by display, even if NULL is not actually allowed.
+But because Null = NO, if you try inserting NULL into lastname, error will come.but if we not mention anything in query for lastname then warning will come and it set '' as value 
+Summary:
+Default = NULL showing does not mean NULL is allowed.
+Null = NO is the real boss → NULL not accepted ✅.
+
+
+
+
+
+
+
+
+MariaDB [utubepractice]> INSERT INTO employee(firstname, middlename, salary, location) VALUES ('Amit', 'Kumar', 20000, 'Delhi');
+Query OK, 1 row affected, 2 warnings (0.236 sec)
+
+MariaDB [utubepractice]> select *from employee;
++-----------+------------+----------+-----+--------+----------+
+| firstname | middlename | lastname | age | salary | location |
++-----------+------------+----------+-----+--------+----------+
+| Ramesh    | Kumar      |          |  50 |  10000 | Bharuch  |
+| Ramesh    | Kumar      |          |  50 | 150000 | Bh.      |
+| Rakesh    | NULL       |          |  80 |   NULL | NULL     |
+| Amit      | Kumar      |          |  25 |  20000 | Delhi    |
+| Amit      | Kumar      |          |   0 |  20000 | Delhi    |
++-----------+------------+----------+-----+--------+----------+
+
+
+see when i not mention anything for age it taking 0 but i put for not null ?
+The issue you're encountering occurs because you didn’t provide a value for the age column, which is marked as NOT NULL.
+Since you did not specify a value for age, MySQL is inserting a default value of 0 instead of throwing an error.
+Why this happens:
+MySQL does not automatically throw an error for a NOT NULL column if you don’t provide a value.
+It inserts the default value of 0 for numeric columns like INT.
+
+Summary:
+NOT NULL does not mean MySQL will throw an error if no value is given.
+It will insert a default value (like 0 for integers).
+VARCHAR → default empty string ('') when NOT NULL.
+
+
+
+
+
+
+
+
+

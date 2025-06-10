@@ -1,0 +1,226 @@
+Session 3: Primary Key Vs Unique Key
+=========================================
+
+
+
+
+Primary Key,
+
+Auto Increment Keys
+
+Unique Key
+
+Primary key vs unique key
+
+INSERT INTO employee(firstname, lastname, age, salary) VALUES ('rajesh','kumar',29,10000);
+
+
+Primary Key 
+==============================
+It helps us to uniquely identify in the table.
+
+
+CREATE TABLE employee (
+id INT,
+firstname varchar(20) NOT NULL,
+middlename varchar(20),
+lastname varchar(20) NOT NULL,
+age INT NOT NULL,
+salary INT NOT NULL,
+location varchar(20) NOT NULL DEFAULT 'BANGLORE'
+);
+
+INSERT INTO employee(id,firstname, lastname, age, salary) VALUES (1,'rajesh','kumar',29,10000),(2,'satish','kumar',28,30000);
+
+
+Add column in already created table
+==========================================
+ALTER TABLE tabl_name ADD column_name column_definition;
+
+MariaDB [utubepractice]> alter table employee add id int primary key;
+ERROR 1062 (23000): Duplicate entry '0' for key 'PRIMARY'====>>> // we cannot put primary key later after created table for doing we must add AUTO_INCREMENT
+
+MariaDB [utubepractice]> ALTER TABLE employee ADD id INT AUTO_INCREMENT PRIMARY KEY;
+
+ 
+
+Creating table with Primary Key:
+===================================
+
+CREATE TABLE employee (
+id INT PRIMARY KEY,
+firstname varchar(20) NOT NULL,
+middlename varchar(20),
+lastname varchar(20) NOT NULL,
+age INT NOT NULL,
+salary INT NOT NULL,
+location varchar(20) NOT NULL DEFAULT 'BANGLORE'
+);
+
+INSERT INTO employee(id,firstname, lastname, age, salary) VALUES (3,'maneesh','kumar',30,10000)
+
+For a primary key null values are not allowed and repeated values also not allowed.
+
+INSERT INTO employee(id,firstname, lastname, age, salary) VALUES (NULL,'rejina','kumar',29,10000);
+ERROR 1048 (23000): Column 'id' cannot be null
+
+INSERT INTO employee(id,firstname, lastname, age, salary) VALUES (1,'rejina','kumar',29,10000);
+
+
+INSERT INTO employee(id,firstname, lastname, age, salary) VALUES (1,'rejina','kumar',29,10000);
+ERROR 1062 (23000): Duplicate entry '1' for key 'PRIMARY'
+
+other way to define the primary key:
+
+=====================================
+CREATE TABLE employee (
+id INT,
+firstname varchar(20) NOT NULL,
+middlename varchar(20),
+lastname varchar(20) NOT NULL,
+age INT NOT NULL,
+salary INT NOT NULL,
+location varchar(20) NOT NULL DEFAULT 'BANGLORE',
+PRIMARY KEY(id)
+);
+
+
+
+Composite Primary Key:
+
+CREATE TABLE employee (
+id INT,
+firstname varchar(20) NOT NULL,
+middlename varchar(20),
+lastname varchar(20) NOT NULL,
+age INT NOT NULL,
+salary INT NOT NULL,
+location varchar(20) NOT NULL DEFAULT 'BANGLORE',
+PRIMARY KEY(id,firstname)
+);
+
+
+creating Table with Autoincrement:
+
+======================================
+
+
+CREATE TABLE employee (
+id INT AUTO_INCREMENT,
+firstname varchar(20) NOT NULL,
+middlename varchar(20),
+lastname varchar(20) NOT NULL,
+age INT NOT NULL,
+salary INT NOT NULL,
+location varchar(20) NOT NULL DEFAULT 'BANGLORE',
+PRIMARY KEY(id)
+);
+
+
+
+INSERT INTO employee(firstname, lastname, age, salary) VALUES ('rejina','kumar',29,10000),('satish','ku
+mar',29,10000),('brijexh','kumar',29,10000);
+Query OK, 3 rows affected (0.02 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select * from employee;
++----+-----------+------------+----------+-----+--------+----------+
+| id | firstname | middlename | lastname | age | salary | location |
++----+-----------+------------+----------+-----+--------+----------+
+|  1 | rejina    | NULL       | kumar    |  29 |  10000 | BANGLORE |
+|  2 | satish    | NULL       | kumar    |  29 |  10000 | BANGLORE |
+|  3 | brijexh   | NULL       | kumar    |  29 |  10000 | BANGLORE |
++----+-----------+------------+----------+-----+--------+----------+
+
+
+
+Adding column in already created table 
+===================================================
+alter table employee add id int auto_increment primary key before firstname;
+ERROR : Because MySQL doesn't allow AUTO_INCREMENT column to be added at a specific position (BEFORE) directly in one command.
+First add column normally, then modify:
+
+ALTER TABLE employee ADD id INT FIRST;
+ALTER TABLE employee MODIFY id INT AUTO_INCREMENT PRIMARY KEY;
+
+Another way : 
+ALTER TABLE employee ADD id INT PRIMARY KEY AUTO_INCREMENT FIRST;
+Old version → error  .....  New version → works
+
+FIRST → works.
+BEFORE column_name → ❌ not allowed with AUTO_INCREMENT directly.
+
+We write FIRST to add the new id column at the beginning of the table, before firstname. Without FIRST, it would add id at the end.
+In short:
+FIRST = add column at the top.
+No FIRST = add column at the last.
+
+
+
+Unique Key:
+
+===========================================
+
+
+
+You can have only one primary key and primary key can not hold any null value.
+
+We shopuld use primary key when we have to identify each record.
+
+
+Unique key can hold NULL values
+
+In MYSQL Unique key can hold any number of NULL values, 
+
+in some of other famous DB's only it allow only NULL.
+
+The purpose of unique key is to make sure the values do not duplicate.
+
+You can have only one primary key but multiple unique keys in table.
+
+
+
+CREATE TABLE employee (
+firstname varchar(20) NOT NULL,
+lastname varchar(20) NOT NULL,
+age INT NOT NULL,
+PRIMARY KEY(firstname,lastname)
+);
+
+
+insert into employee values ('kapil', 'sharma', 28);
+
+insert into employee values ('kapil', 'sinha', 28);
+
+
+CREATE TABLE employee (
+id INT UNIQUE KEY,
+firstname varchar(20) ,
+lastname varchar(20) ,
+age INT
+);
+
+
+CREATE TABLE employee2 (
+firstname varchar(20) NOT NULL,
+lastname varchar(20) NOT NULL,
+age INT NOT NULL,
+location varchar(20) NOT NULL DEFAULT 'BANGLORE',
+PRIMARY KEY (firstName,lastname)
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

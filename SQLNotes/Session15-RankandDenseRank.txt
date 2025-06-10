@@ -1,0 +1,149 @@
+-----------------
+RANK & DENSE RANK
+-----------------
+
+CREATE TABLE employee(
+    firstname varchar(20),
+    lastname varchar(20),
+    age int,
+    salary int,
+    location varchar(20)
+);
+
+INSERT INTO employee VALUES
+('Sachin', 'Sharma', 28, 10000, 'Bangalore'),
+('Shane', 'Warne', 30, 20000, 'Bangalore'),
+('Rohit', 'Sharma', 32, 30000, 'Hyderabad'),
+('Shikhar', 'Dhawan', 32, 25000, 'Hyderabad'),
+('Rahul', 'Dravid', 31, 21000, 'Banagalore'),
+('Saurabh', 'Ganguly', 32, 15000, 'Pune'),
+('Kapil', 'Dev', 34, 10000, 'Pune');
+
+----------------------------------------
+MariaDB [utubepractice]> select firstname, lastname, salary, row_number() over (order by salary) as ranknumber from employee;
++-----------+----------+--------+------------+
+| firstname | lastname | salary | ranknumber |
++-----------+----------+--------+------------+
+| Sachin    | Sharma   |  10000 |          1 |
+| Kapil     | Dev      |  10000 |          2 |
+| Saurabh   | Ganguly  |  15000 |          3 |
+| Shane     | Warne    |  20000 |          4 |
+| Rahul     | Dravid   |  21000 |          5 |
+| Shikhar   | Dhawan   |  25000 |          6 |
+| Rohit     | Sharma   |  30000 |          7 |
++-----------+----------+--------+------------+
+7 rows in set (0.000 sec)
+----------------------------------------
+** Ideally, we should use ROW_NUMBER when there are no duplicate records
+** Like in ROW_NUMBER, ORDER BY is mandatory for RANK & DENSE_RANK
+-- Like in the above Example, Sachin and Kapil are having same salary so which one will get which row number we don't know.
+-- ROW_NUMBER do not handles duplicate, so we have RANK & DENSE RANK
+
+-- With ROW_NUMBER()
+SELECT firstname, lastname, salary, 
+row_number() OVER (ORDER BY salary DESC) FROM employee;
+
+-- With RANK()
+SELECT firstname, lastname, salary, 
+RANK() OVER (ORDER BY salary DESC) FROM employee;
+
+-- With DENSE_RANK()
+SELECT firstname, lastname, salary, 
+DENSE_RANK() OVER (ORDER BY salary DESC) FROM employee;
+
+** RANK() will skip assigning row numbers to records when there are duplicate data in the records.
+** RANK() will assign the same rank for duplicate data in the records.
+
+** DENSE_RANK() will assign the row numbers in sequence even when there are duplicate data in the records.
+
+** When there are no duplicate data in the records, ROW_NUMBER(), RANK() and DENSE_RANK() all of them will give the same result.
+
+MariaDB [utubepractice]> select firstname,lastname,salary,row_number() over (order by salary) as ranknumber from employee;
++-----------+----------+--------+------------+
+| firstname | lastname | salary | ranknumber |
++-----------+----------+--------+------------+
+| Sachin    | Sharma   |  10000 |          1 |
+| Kapil     | Dev      |  10000 |          2 |
+| Saurabh   | Ganguly  |  15000 |          3 |
+| Shane     | Warne    |  20000 |          4 |
+| Rahul     | Dravid   |  20000 |          5 |
+| Shikhar   | Dhawan   |  25000 |          6 |
+| Rohit     | Sharma   |  30000 |          7 |
++-----------+----------+--------+------------+
+7 rows in set (0.001 sec)
+
+MariaDB [utubepractice]> select firstname,lastname,salary,rank() over (order by salary) as ranknumber from employee;
++-----------+----------+--------+------------+
+| firstname | lastname | salary | ranknumber |
++-----------+----------+--------+------------+
+| Sachin    | Sharma   |  10000 |          1 |
+| Kapil     | Dev      |  10000 |          1 |
+| Saurabh   | Ganguly  |  15000 |          3 |
+| Shane     | Warne    |  20000 |          4 |
+| Rahul     | Dravid   |  20000 |          4 |
+| Shikhar   | Dhawan   |  25000 |          6 |
+| Rohit     | Sharma   |  30000 |          7 |
++-----------+----------+--------+------------+
+7 rows in set (0.001 sec)
+
+MariaDB [utubepractice]> select firstname,lastname,salary,dense_rank() over (order by salary) as ranknumber from employee;
++-----------+----------+--------+------------+
+| firstname | lastname | salary | ranknumber |
++-----------+----------+--------+------------+
+| Sachin    | Sharma   |  10000 |          1 |
+| Kapil     | Dev      |  10000 |          1 |
+| Saurabh   | Ganguly  |  15000 |          2 |
+| Shane     | Warne    |  20000 |          3 |
+| Rahul     | Dravid   |  20000 |          3 |
+| Shikhar   | Dhawan   |  25000 |          4 |
+| Rohit     | Sharma   |  30000 |          5 |
++-----------+----------+--------+------------+
+7 rows in set (0.000 sec)
+
+====================================================================
+** When there are no duplicates in the records then use ROW_NUMBER
+
+When should we use the DENSE_RANK() ?
+
+-- Consider the usecase when we have to find the top 3 positions in some competition, then as per DENSE_RANK(), we will have the
+below ranks
+
+Candidate 1 score = 100 ==> 1
+Candidate 2 score = 100 ==> 1
+Candidate 3 score = 98 ==> 2
+Candidate 4 score = 97 ==> 3
+Candidate 5 score = 97 ==> 3
+Candidate 6 score = 96 ==> 4
+
+-- Find the person having rank = 4
+
+SELECT * FROM (SELECT firstname, lastname, salary, 
+DENSE_RANK() OVER (ORDER BY salary DESC) AS rownum from employee) temptable WHERE rownum = 4;
+
+MariaDB [utubepractice]> SELECT * FROM (SELECT firstname, lastname, salary,
+    -> RANK() OVER (ORDER BY salary DESC) AS rownum from employee) temptable WHERE rownum = 4;
+Empty set (0.001 sec)
+
+MariaDB [utubepractice]> SELECT * FROM (SELECT firstname, lastname, salary,
+    -> Dense_RANK() OVER (ORDER BY salary DESC) AS rownum from employee) temptable WHERE rownum = 4;
++-----------+----------+--------+--------+
+| firstname | lastname | salary | rownum |
++-----------+----------+--------+--------+
+| Saurabh   | Ganguly  |  15000 |      4 |
++-----------+----------+--------+--------+
+1 row in set (0.001 sec)
+
+----------------------------------------
+
+-- adding the flavour of partitions
+SELECT * FROM (SELECT firstname, lastname, salary, 
+DENSE_RANK() OVER (PARTITION BY location ORDER BY salary DESC) AS rownum from employee) temptable WHERE rownum = 2;
+
+--find the highest salary getters at each location
+SELECT * FROM (SELECT firstname, lastname, salary, 
+DENSE_RANK() OVER (PARTITION BY location ORDER BY salary DESC) AS rownum from employee) temptable WHERE rownum = 1;
+
+Remember --
+ it is mandatory to use the order by clause
+ we can also use the partition by - but it's optional
+ The row number starts from 1 for every partition

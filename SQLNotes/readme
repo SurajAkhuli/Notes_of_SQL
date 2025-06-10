@@ -1,0 +1,23 @@
+This is a readme file.
+
+Added a new feature called as Feature1
+
+0:34 : Database: The Basics
+19:54 : SQL Basics
+36:05 : CRUD operations in SQL
+1:12:22 : Primary Key vs Unique Key
+1:39:17 : DDL vs DML commands
+2:18:27 : Foreign Key constraint 
+3:01:14 : Distinct, Order By, Limit, Like clause in SQL
+3:47:48 : Aggregate Functions
+4:20:11 : More Data Types
+4:40:02 : Logical Operators
+4:57:14 : CASE WHEN statements
+5:07:34 : Joins
+5:40:24 : Important SQL Interview Questions
+5:58:35 : Over() and Partition by clauses
+6:16:12 : Windows function (row_num())
+6:31:20 : Windows function (rank(), dense_rank())
+6:49:37 : Indexes and Order of Execution in SQL
+7:53:07 : SQL WITH clause (common table expression)
+
